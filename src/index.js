@@ -2,6 +2,7 @@ import './index.css';
 import config from './config.json';
 import L from 'leaflet';
 
+// TODO force refresh from query parameter
 async function getUserCoordinates() {
   const localStore = localStorage.getItem('location');
 
