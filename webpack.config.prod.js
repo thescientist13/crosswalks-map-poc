@@ -6,14 +6,12 @@ const webpackMerge = require('webpack-merge');
 module.exports = webpackMerge(commonConfig, {
 
   module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          use: ['css-loader']
-        })
-      }
-    ]
+    rules: [{
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        use: ['css-loader']
+      })
+    }]
   },
 
   plugins: [
