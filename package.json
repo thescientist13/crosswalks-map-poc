@@ -7,6 +7,7 @@
   "author": "Owen Buckley <owen.buckley@analogstudios.net>",
   "license": "Apache-2.0",
   "scripts": {
+    "setup": "cp ./src/config.json.tmpl ./src/config.json",
     "build": "rimraf ./build && eslint *.js && webpack --config ./webpack.config.prod.js -p --progress --profile --bail",
     "develop": "webpack-dev-server --https --open --config ./webpack.config.develop.js --inline --progress",
     "serve": "npm run build && http-server ./build -o"
@@ -19,6 +20,7 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",
+    "cp": "^0.2.0",
     "css-loader": "^0.28.7",
     "eslint": "^4.7.0",
     "eslint-loader": "^1.9.0",
