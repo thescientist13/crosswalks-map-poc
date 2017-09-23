@@ -2,6 +2,37 @@ import './index.css';
 import config from './config.json';
 import L from 'leaflet';
 
+async function getUserCoordinates() {
+  const localStore = localStorage.getItem('location');
+
+  console.log('localStore', localStore); // eslint-disable-line
+  const hasExistingStore = localStore && localStore.timestamp && localStore.coords;
+  let coords = {};
+
+  if (hasExistingStore) {
+    const millisecondsInDay = 86400 * 1000;
+    const userForcedRefresh = true;
+    const hasStaleStoreData = localStore.timestamp + millisecondsInDay > new Date().now();
+
+    if (userForcedRefresh || hasStaleStoreData) {
+      console.debug('refreshing user coordindate to local storage'); // eslint-disable-line
+      const obj = yield navigator.geolocation.getCurrentPosition();
+
+      document.getElementById('status').innerHTML = `You're at: ${obj.coords.latitude} (lat) / ${obj.coords.longitude} (long)`;
+      localStorage.location = {
+        timestamp: obj.timestamp,
+        coords: obj.coords
+      };
+
+      coords = obj.coords;
+    } else {
+      coords = localStore.coords;
+    }
+  }
+
+  return coords;
+}
+
 function createMap(latitude, longitude) {
   const map = L.map('map').setView([latitude, longitude], 13);
 
@@ -13,9 +44,8 @@ function createMap(latitude, longitude) {
   }).addTo(map);
 }
 
-navigator.geolocation.getCurrentPosition((obj) => {
-  const coords = obj.coords;
+window.addEventListener('load', () => {
+  const coords = getUserCoordinates();
 
-  document.getElementById('status').innerHTML = `You're at: ${coords.latitude} * ${obj.coords.longitude}`;
   createMap(coords.latitude, coords.longitude);
 });
