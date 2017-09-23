@@ -1,7 +1,12 @@
 # crosswalk-map-poc
 
 ## Overview
-A POC using [GeoJSON](http://geojson.org/) to show a map with crosswalk data using [Leaflet](http://leafletjs.com/) and [Mapbox](https://www.mapbox.com/)
+A POC using [GeoJSON](http://geojson.org/) to show a map with crosswalk data using [Leaflet](http://leafletjs.com/) and [Mapbox](https://www.mapbox.com/).
+
+Currently the app can:
+- Get the current user's location (lat / long coordinates) using the [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation)
+- Using that information to load a contextualized map on the page
+
 
 ## Installation
 After you clone the repo, follow these steps
