@@ -53,7 +53,7 @@ function createMap(currentLatitude, currentLongitude) {
     accessToken: config.mapboxApiKey
   }).addTo(map);
 
-  // TODO fix console error loading images
+  // TODO fix console errors for loading image paths
   L.marker(HOME_COORDS_ARRAY).addTo(map);
 
   L.circle(HOME_COORDS_ARRAY, {
