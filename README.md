@@ -28,3 +28,5 @@ Just to get the app up and running, run `yarn run serve`
 - `yarn run build` - production build task
 - `yarn run serve` - run a production build locally
 - `yarn run setup` - creates _config.json_ from the template file _config.json.tmpl_
+
+**Note: Add `?forceRefresh` to the URL bar to force a geelocation lookup**

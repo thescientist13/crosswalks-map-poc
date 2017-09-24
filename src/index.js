@@ -2,11 +2,12 @@ import './index.css';
 import config from './config.json';
 import L from 'leaflet';
 
+const LOCAL_STORAGE_KEY = 'geolocation';
+
 function resolveGeolactionPromise(resolve) {
   navigator.geolocation.getCurrentPosition((position) => {
-    document.getElementById('status').innerHTML = `You're at: ${position.coords.latitude} (lat) / ${position.coords.longitude} (long)`;
 
-    localStorage.location = JSON.stringify({
+    localStorage[LOCAL_STORAGE_KEY] = JSON.stringify({
       timestamp: position.timestamp,
       coords: {
         latitude: position.coords.latitude,
@@ -18,17 +19,16 @@ function resolveGeolactionPromise(resolve) {
   });
 }
 
-// TODO force refresh from query parameter
 function getUserCoordinates() {
-  const localStoreLocation = localStorage.getItem('location') ? JSON.parse(localStorage.getItem('location')) : null;
+  const localStoreLocation = localStorage.getItem(LOCAL_STORAGE_KEY) ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) : null;
   const hasExistingStore = localStoreLocation && localStoreLocation.timestamp && localStoreLocation.coords;
 
   if (hasExistingStore) {
     const millisecondsInDay = 86400 * 1000;
-    const userForcedRefresh = false;
-    const hasStaleStoreData = localStoreLocation.timestamp + millisecondsInDay <= Date.now(); // we'll refresh every 24h
+    const userForcedRefresh = location.search.indexOf('?forceRefresh') >= 0;
+    const hasStaleStoreLocationData = localStoreLocation.timestamp + millisecondsInDay <= Date.now(); // we'll refresh every 24h
 
-    if (userForcedRefresh || hasStaleStoreData) {
+    if (userForcedRefresh || hasStaleStoreLocationData) {
       return new Promise(resolveGeolactionPromise);
     } else {
       return new Promise((resolve) => {
@@ -54,6 +54,8 @@ function createMap(latitude, longitude) {
 window.addEventListener('load', () => {
 
   getUserCoordinates().then((coords) => {
+    document.getElementById('status').innerHTML = `You're at: ${coords.latitude} (lat) / ${coords.longitude} (long)`;
+
     createMap(coords.latitude, coords.longitude);
   }).catch((err) => {
     console.error('uhoh....', err); // eslint-disable-line
