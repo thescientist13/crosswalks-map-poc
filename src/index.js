@@ -7,32 +7,34 @@ const LOCAL_STORAGE_KEY = 'geolocation';
 function resolveGeolactionPromise(resolve) {
   navigator.geolocation.getCurrentPosition((position) => {
 
-    localStorage[LOCAL_STORAGE_KEY] = JSON.stringify({
+    const dataForLocalStorage = {
       timestamp: position.timestamp,
       coords: {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude
       }
-    });
+    };
+
+    localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(dataForLocalStorage);
 
     resolve(position.coords);
   });
 }
 
 function getUserCoordinates() {
-  const localStoreLocation = localStorage.getItem(LOCAL_STORAGE_KEY) ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) : null;
-  const hasExistingStore = localStoreLocation && localStoreLocation.timestamp && localStoreLocation.coords;
+  const localStoreGeolocation = localStorage.getItem(LOCAL_STORAGE_KEY) ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) : null;
+  const hasExistingStoreGeolocationData = localStoreGeolocation && localStoreGeolocation.timestamp && localStoreGeolocation.coords;
 
-  if (hasExistingStore) {
-    const millisecondsInDay = 86400 * 1000;
+  if (hasExistingStoreGeolocationData) {
+    const millisecondsInDay = 86400 * 1000; // we'll refresh local storage every 24h
     const userForcedRefresh = location.search.indexOf('?forceRefresh') >= 0;
-    const hasStaleStoreLocationData = localStoreLocation.timestamp + millisecondsInDay <= Date.now(); // we'll refresh every 24h
+    const hasStaleStoreLocationData = localStoreGeolocation.timestamp + millisecondsInDay <= Date.now();
 
     if (userForcedRefresh || hasStaleStoreLocationData) {
       return new Promise(resolveGeolactionPromise);
     } else {
       return new Promise((resolve) => {
-        resolve(localStoreLocation.coords);
+        resolve(localStoreGeolocation.coords);
       });
     }
   } else {
