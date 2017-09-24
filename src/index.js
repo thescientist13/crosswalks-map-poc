@@ -4,7 +4,7 @@ import L from 'leaflet';
 
 const LOCAL_STORAGE_KEY = 'geolocation';
 
-function resolveGeolactionPromise(resolve) {
+function resolveGeolactionLookup(resolve) {
   navigator.geolocation.getCurrentPosition((position) => {
 
     const dataForLocalStorage = {
@@ -31,14 +31,14 @@ function getUserCoordinates() {
     const hasStaleStoreLocationData = localStoreGeolocation.timestamp + millisecondsInDay <= Date.now();
 
     if (userForcedRefresh || hasStaleStoreLocationData) {
-      return new Promise(resolveGeolactionPromise);
+      return new Promise(resolveGeolactionLookup);
     } else {
       return new Promise((resolve) => {
         resolve(localStoreGeolocation.coords);
       });
     }
   } else {
-    return new Promise(resolveGeolactionPromise);
+    return new Promise(resolveGeolactionLookup);
   }
 }
 
