@@ -9,7 +9,7 @@
   "scripts": {
     "setup": "cp ./src/config.json.tmpl ./src/config.json",
     "build": "rimraf ./build && eslint *.js && webpack --config ./webpack.config.prod.js -p --progress --profile --bail",
-    "develop": "webpack-dev-server --https --open --config ./webpack.config.develop.js --inline --progress",
+    "develop": "webpack-dev-server --open --config ./webpack.config.develop.js --inline --progress",
     "serve": "npm run build && http-server ./build -o"
   },
   "dependencies": {

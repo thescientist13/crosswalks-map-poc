@@ -2,36 +2,42 @@ import './index.css';
 import config from './config.json';
 import L from 'leaflet';
 
-// TODO force refresh from query parameter
-async function getUserCoordinates() {
-  const localStore = localStorage.getItem('location');
+function resolveGeolactionPromise(resolve) {
+  navigator.geolocation.getCurrentPosition((position) => {
+    document.getElementById('status').innerHTML = `You're at: ${position.coords.latitude} (lat) / ${position.coords.longitude} (long)`;
 
-  console.log('localStore', localStore); // eslint-disable-line
-  const hasExistingStore = localStore && localStore.timestamp && localStore.coords;
-  let coords = {};
+    localStorage.location = JSON.stringify({
+      timestamp: position.timestamp,
+      coords: {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      }
+    });
+
+    resolve(position.coords);
+  });
+}
+
+// TODO force refresh from query parameter
+function getUserCoordinates() {
+  const localStoreLocation = localStorage.getItem('location') ? JSON.parse(localStorage.getItem('location')) : null;
+  const hasExistingStore = localStoreLocation && localStoreLocation.timestamp && localStoreLocation.coords;
 
   if (hasExistingStore) {
     const millisecondsInDay = 86400 * 1000;
-    const userForcedRefresh = true;
-    const hasStaleStoreData = localStore.timestamp + millisecondsInDay > new Date().now();
+    const userForcedRefresh = false;
+    const hasStaleStoreData = localStoreLocation.timestamp + millisecondsInDay <= Date.now(); // we'll refresh every 24h
 
     if (userForcedRefresh || hasStaleStoreData) {
-      console.debug('refreshing user coordindate to local storage'); // eslint-disable-line
-      const obj = yield navigator.geolocation.getCurrentPosition();
-
-      document.getElementById('status').innerHTML = `You're at: ${obj.coords.latitude} (lat) / ${obj.coords.longitude} (long)`;
-      localStorage.location = {
-        timestamp: obj.timestamp,
-        coords: obj.coords
-      };
-
-      coords = obj.coords;
+      return new Promise(resolveGeolactionPromise);
     } else {
-      coords = localStore.coords;
+      return new Promise((resolve) => {
+        resolve(localStoreLocation.coords);
+      });
     }
+  } else {
+    return new Promise(resolveGeolactionPromise);
   }
-
-  return coords;
 }
 
 function createMap(latitude, longitude) {
@@ -46,7 +52,11 @@ function createMap(latitude, longitude) {
 }
 
 window.addEventListener('load', () => {
-  const coords = getUserCoordinates();
 
-  createMap(coords.latitude, coords.longitude);
+  getUserCoordinates().then((coords) => {
+    createMap(coords.latitude, coords.longitude);
+  }).catch((err) => {
+    console.error('uhoh....', err); // eslint-disable-line
+  });
+
 });
