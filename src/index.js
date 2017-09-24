@@ -1,7 +1,6 @@
 import './index.css';
 import config from './config.json';
 import L from 'leaflet';
-console.log('L', L);  // eslint-disable-line
 
 function createMap(latitude, longitude) {
   const map = L.map('map').setView([latitude, longitude], 13);
