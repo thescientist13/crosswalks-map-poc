@@ -2,6 +2,46 @@ import './index.css';
 import config from './config.json';
 import L from 'leaflet';
 
+const LOCAL_STORAGE_KEY = 'geolocation';
+
+function resolveGeolactionLookup(resolve) {
+  navigator.geolocation.getCurrentPosition((position) => {
+
+    const dataForLocalStorage = {
+      timestamp: position.timestamp,
+      coords: {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      }
+    };
+
+    localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(dataForLocalStorage);
+
+    resolve(position.coords);
+  });
+}
+
+function getUserCoordinates() {
+  const localStoreGeolocation = localStorage.getItem(LOCAL_STORAGE_KEY) ? JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) : null;
+  const hasExistingStoreGeolocationData = localStoreGeolocation && localStoreGeolocation.timestamp && localStoreGeolocation.coords;
+
+  if (hasExistingStoreGeolocationData) {
+    const millisecondsInDay = 86400 * 1000; // we'll refresh local storage every 24h
+    const userForcedRefresh = location.search.indexOf('?forceRefresh') >= 0;
+    const hasStaleStoreLocationData = localStoreGeolocation.timestamp + millisecondsInDay <= Date.now();
+
+    if (userForcedRefresh || hasStaleStoreLocationData) {
+      return new Promise(resolveGeolactionLookup);
+    } else {
+      return new Promise((resolve) => {
+        resolve(localStoreGeolocation.coords);
+      });
+    }
+  } else {
+    return new Promise(resolveGeolactionLookup);
+  }
+}
+
 function createMap(latitude, longitude) {
   const map = L.map('map').setView([latitude, longitude], 13);
 
@@ -13,9 +53,14 @@ function createMap(latitude, longitude) {
   }).addTo(map);
 }
 
-navigator.geolocation.getCurrentPosition((obj) => {
-  const coords = obj.coords;
+window.addEventListener('load', () => {
 
-  document.getElementById('status').innerHTML = `You're at: ${coords.latitude} * ${obj.coords.longitude}`;
-  createMap(coords.latitude, coords.longitude);
+  getUserCoordinates().then((coords) => {
+    document.getElementById('status').innerHTML = `You're at: ${coords.latitude} (lat) / ${coords.longitude} (long)`;
+
+    createMap(coords.latitude, coords.longitude);
+  }).catch((err) => {
+    console.error('uhoh....', err); // eslint-disable-line
+  });
+
 });

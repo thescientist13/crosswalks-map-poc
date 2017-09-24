@@ -1,7 +1,7 @@
 {
-  "name": "sidewalk-map-poc",
+  "name": "crosswalks-map-poc",
   "version": "0.1.0",
-  "description": "A POC using GeoJSON to show a map with sidewalk data",
+  "description": "A POC using GeoJSON to show a map with crosswalk data",
   "main": "src/index.js",
   "repository": "git@github.com:thescientist13/sidewalk-map-poc.git",
   "author": "Owen Buckley <owen.buckley@analogstudios.net>",
@@ -9,7 +9,7 @@
   "scripts": {
     "setup": "cp ./src/config.json.tmpl ./src/config.json",
     "build": "rimraf ./build && eslint *.js && webpack --config ./webpack.config.prod.js -p --progress --profile --bail",
-    "develop": "webpack-dev-server --https --open --config ./webpack.config.develop.js --inline --progress",
+    "develop": "webpack-dev-server --open --config ./webpack.config.develop.js --inline --progress",
     "serve": "npm run build && http-server ./build -o"
   },
   "dependencies": {

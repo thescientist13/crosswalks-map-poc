@@ -1,4 +1,4 @@
-# crosswalk-map-poc
+# crosswalks-map-poc
 
 ## Overview
 A POC using [GeoJSON](http://geojson.org/) to show a map with crosswalk data using [Leaflet](http://leafletjs.com/) and [Mapbox](https://www.mapbox.com/).
@@ -28,3 +28,5 @@ Just to get the app up and running, run `yarn run serve`
 - `yarn run build` - production build task
 - `yarn run serve` - run a production build locally
 - `yarn run setup` - creates _config.json_ from the template file _config.json.tmpl_
+
+**Note: Add `?forceRefresh` to the URL bar to force a geelocation lookup**
