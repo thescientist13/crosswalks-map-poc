@@ -3,6 +3,7 @@ import config from './config.json';
 import L from 'leaflet';
 
 const LOCAL_STORAGE_KEY = 'geolocation';
+const HOME_COORDS_ARRAY = [41.499852, -71.30245];
 
 function resolveGeolactionLookup(resolve) {
   navigator.geolocation.getCurrentPosition((position) => {
@@ -42,8 +43,8 @@ function getUserCoordinates() {
   }
 }
 
-function createMap(latitude, longitude) {
-  const map = L.map('map').setView([latitude, longitude], 13);
+function createMap(currentLatitude, currentLongitude) {
+  const map = L.map('map').setView([currentLatitude, currentLongitude], 13);
 
   L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${config.mapboxApiKey}`, {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>', // eslint-disable-line
@@ -51,6 +52,21 @@ function createMap(latitude, longitude) {
     id: 'mapbox.streets',
     accessToken: config.mapboxApiKey
   }).addTo(map);
+
+  // TODO fix console errors for loading image paths
+  L.marker(HOME_COORDS_ARRAY).addTo(map);
+
+  L.circle(HOME_COORDS_ARRAY, {
+    color: 'red',
+    fillColor: '#f03',
+    fillOpacity: 0.5,
+    radius: 500
+  }).addTo(map);
+
+  L.popup()
+    .setLatLng(HOME_COORDS_ARRAY)
+    .setContent('This is where I live!')
+    .openOn(map);
 }
 
 window.addEventListener('load', () => {
