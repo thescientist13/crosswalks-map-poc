@@ -1,7 +1,7 @@
 {
-  "name": "sidewalk-map-poc",
+  "name": "crosswalks-map-poc",
   "version": "0.1.0",
-  "description": "A POC using GeoJSON to show a map with sidewalk data",
+  "description": "A POC using GeoJSON to show a map with crosswalk data",
   "main": "src/index.js",
   "repository": "git@github.com:thescientist13/sidewalk-map-poc.git",
   "author": "Owen Buckley <owen.buckley@analogstudios.net>",

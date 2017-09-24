@@ -1,4 +1,4 @@
-# crosswalk-map-poc
+# crosswalks-map-poc
 
 ## Overview
 A POC using [GeoJSON](http://geojson.org/) to show a map with crosswalk data using [Leaflet](http://leafletjs.com/) and [Mapbox](https://www.mapbox.com/).
